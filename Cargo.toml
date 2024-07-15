@@ -1,0 +1,19 @@
+[package]
+name = "egui-theme-switch"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75.0"
+license = "MIT OR Apache-2.0"
+readme = "readme.md"
+repository = "https://github.com/bash/egui-theme-switch"
+
+[features]
+default = ["accesskit"]
+accesskit = ["egui/accesskit"]
+
+[dependencies]
+egui = { version = "0.28.1", default-features = false }
+serde = { version = "1.0", features = ["derive"], optional = false }
+
+[workspace]
+members = ["demo"]

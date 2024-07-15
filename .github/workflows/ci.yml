@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -Dwarnings
+
+jobs:
+  pre-build:
+    name: Pre-Build
+    runs-on: ubuntu-latest
+    outputs:
+      rust-version: ${{ steps.rust-version.outputs.rust-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine Rust Version
+        id: rust-version
+        run: |
+          rust_version=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[] | select(.name == "egui-theme-switch") | .rust_version')
+          echo "rust-version=$rust_version" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: pre-build
+    name: ${{ format('Build ({0})', matrix.rust-version) }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust-version:
+          ["${{needs.pre-build.outputs.rust-version}}", stable, nightly]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Rust ${{matrix.rust-version}}
+        if: matrix.rust-version != 'stable'
+        run: rustup override set '${{matrix.rust-version}}'
+      - name: Ensure rustfmt is installed
+        run: rustup component add rustfmt
+        if: matrix.rust-version != 'stable'
+      - name: Build
+        run: cargo build --workspace --all-targets --all-features
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup override set nightly
+      - name: Build Docs
+        run: cargo doc --workspace --all-features --no-deps
+        env:
+          RUSTDOCFLAGS: -Dwarnings
+
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check format
+        run: cargo fmt -- --check
+      - name: Run clippy
+        run: cargo clippy --workspace --all-targets --all-features -- --deny warnings
+      - uses: EmbarkStudios/cargo-deny-action@v1
+
+  test:
+    name: Test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests on all targets
+        run: cargo test --workspace --all-targets --all-features
+      - name: Run doc tests
+        run: cargo test --workspace --doc --all-features
+
+  test_package:
+    name: Test Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package
+        run: cargo package -p egui-theme-switch
+      - name: Test Package
+        run: (cd target/package/egui-theme-switch-*/ && cargo test)
