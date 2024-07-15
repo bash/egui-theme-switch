@@ -4,7 +4,7 @@ use egui_theme_switch::{ThemePreference, ThemeSwitch};
 
 fn main() -> eframe::Result {
     let system_theme = system_theme();
-    let default_theme = system_theme.clone().unwrap_or(Theme::Light);
+    let default_theme = system_theme.unwrap_or(Theme::Light);
     let options = eframe::NativeOptions {
         default_theme,
         centered: true,
