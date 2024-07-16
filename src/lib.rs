@@ -58,7 +58,24 @@ impl<'a> ThemeSwitch<'a> {
 
 impl<'a> Widget for ThemeSwitch<'a> {
     fn ui(self, ui: &mut crate::Ui) -> crate::Response {
-        let (update, response) = switch(ui, *self.value, "Theme", options());
+        static OPTIONS: [SwitchOption<ThemePreference>; 3] = [
+            SwitchOption {
+                value: ThemePreference::System,
+                icon: cogwheel::cogwheel,
+                label: "Follow System",
+            },
+            SwitchOption {
+                value: ThemePreference::Dark,
+                icon: moon::moon,
+                label: "Dark",
+            },
+            SwitchOption {
+                value: ThemePreference::Light,
+                icon: sun::sun,
+                label: "Light",
+            },
+        ];
+        let (update, response) = switch(ui, *self.value, "Theme", &OPTIONS);
 
         if let Some(value) = update {
             *self.value = value;
@@ -66,26 +83,6 @@ impl<'a> Widget for ThemeSwitch<'a> {
 
         response
     }
-}
-
-fn options() -> Vec<SwitchOption<ThemePreference>> {
-    vec![
-        SwitchOption {
-            value: ThemePreference::System,
-            icon: cogwheel::cogwheel,
-            label: "Follow System",
-        },
-        SwitchOption {
-            value: ThemePreference::Dark,
-            icon: moon::moon,
-            label: "Dark",
-        },
-        SwitchOption {
-            value: ThemePreference::Light,
-            icon: sun::sun,
-            label: "Light",
-        },
-    ]
 }
 
 /// The user's theme preference.
@@ -111,7 +108,7 @@ impl From<ThemePreference> for SystemTheme {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct SwitchOption<T> {
     value: T,
     icon: IconPainter,
@@ -124,7 +121,7 @@ fn switch<T>(
     ui: &mut Ui,
     value: T,
     label: &str,
-    options: Vec<SwitchOption<T>>,
+    options: &[SwitchOption<T>],
 ) -> (Option<T>, Response)
 where
     T: PartialEq + Clone,
@@ -175,18 +172,18 @@ mod space_allocation {
     use egui::emath::vec2;
     use egui::{Id, Sense};
 
-    pub(super) fn allocate_space<T>(
-        ui: &mut Ui,
-        options: Vec<SwitchOption<T>>,
-    ) -> AllocatedSpace<T> {
-        let (rect, response, measurements) = allocate_switch(ui, &options);
+    pub(super) fn allocate_space<T>(ui: &mut Ui, options: &[SwitchOption<T>]) -> AllocatedSpace<T>
+    where
+        T: Clone,
+    {
+        let (rect, response, measurements) = allocate_switch(ui, options);
         let id = response.id;
 
         // Focusable elements always get an accessible node, so let's ensure that
         // the parent is set correctly when the responses are created the first time.
         ui.ctx().clone().with_accessibility_parent_(id, || {
             let buttons = options
-                .into_iter()
+                .iter()
                 .enumerate()
                 .scan(rect, |remaining, (n, option)| {
                     Some(allocate_button(ui, remaining, id, &measurements, n, option))
@@ -248,15 +245,18 @@ mod space_allocation {
         switch_id: Id,
         measurements: &SwitchMeasurements,
         n: usize,
-        option: SwitchOption<T>,
-    ) -> ButtonSpace<T> {
+        option: &SwitchOption<T>,
+    ) -> ButtonSpace<T>
+    where
+        T: Clone,
+    {
         let (rect, center) = partition(remaining, measurements, n);
         let response = ui.interact(rect, switch_id.with(n), Sense::click());
         ButtonSpace {
             center,
             response,
             radius: measurements.radius,
-            option,
+            option: option.clone(),
         }
     }
 
