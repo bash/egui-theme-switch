@@ -6,6 +6,10 @@ rust-version = "1.79.0"
 license = "MIT OR Apache-2.0"
 readme = "readme.md"
 repository = "https://github.com/bash/egui-theme-switch"
+description = "A pretty theme switch for your egui app"
+keywords = ["egui", "widget", "dark-light", "switch"]
+categories = ["gui"]
+exclude = [".github", "doc/*.py", "deny.toml"]
 
 [features]
 default = ["accesskit"]
