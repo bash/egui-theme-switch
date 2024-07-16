@@ -31,7 +31,7 @@ struct ThemeSwitchDemoApp {
 impl ThemeSwitchDemoApp {
     fn new(system_theme: Option<Theme>) -> Self {
         Self {
-            preference: ThemePreference::Dark,
+            preference: ThemePreference::System,
             default_theme: Theme::Light,
             system_theme,
         }

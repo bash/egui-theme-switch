@@ -1,3 +1,20 @@
+//! A *very* pretty theme switch widget for your egui app.
+//! It allows you to choose between dark, light and follow system.
+//!
+#![cfg_attr(doc, doc = include_str!("../doc/preview.md"))]
+//!
+//! ## Example
+//! ```
+//! use egui_theme_switch::{ThemeSwitch, ThemePreference};
+//!
+//! # egui::__run_test_ui(|ui| {
+//! let mut preference = ThemePreference::System;
+//! if ui.add(ThemeSwitch::new(&mut preference)).changed() {
+//!     // ...
+//! }
+//! # });
+//! ```
+
 use egui::emath::{Pos2, Rect};
 use egui::epaint::Color32;
 use egui::{Painter, Response, SystemTheme, Ui, Widget};
@@ -11,6 +28,17 @@ mod sun;
 
 /// A switch control that allows choosing the theme
 /// preference (dark, light or follow system).
+///
+/// ```
+/// use egui_theme_switch::{ThemeSwitch, ThemePreference};
+///
+/// # egui::__run_test_ui(|ui| {
+/// let mut preference = ThemePreference::System;
+/// if ui.add(ThemeSwitch::new(&mut preference)).changed() {
+///     // ...
+/// }
+/// # });
+/// ```
 #[must_use = "You should put this widget in an ui with `ui.add(widget);`"]
 #[derive(Debug)]
 pub struct ThemeSwitch<'a> {
@@ -57,7 +85,7 @@ impl<'a> ThemeSwitch<'a> {
     }
 }
 
-/// Which theme should egui use?
+/// The user's theme preference.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum ThemePreference {
