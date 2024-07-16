@@ -1,3 +1,5 @@
+#![deny(clippy::dbg_macro, clippy::unwrap_used)]
+
 //! A *very* pretty theme switch widget for your egui app.
 //! It allows you to choose between dark, light and follow system.
 //!
@@ -14,6 +16,9 @@
 //! }
 //! # });
 //! ```
+//!
+//! ## Available Features
+//! * `accesskit` — Integrate with accesskit (enabled by default).
 
 use egui::emath::{Pos2, Rect};
 use egui::epaint::Color32;
@@ -85,7 +90,6 @@ fn options() -> Vec<SwitchOption<ThemePreference>> {
 
 /// The user's theme preference.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum ThemePreference {
     /// Dark mode: light text on a dark background.
     Dark,

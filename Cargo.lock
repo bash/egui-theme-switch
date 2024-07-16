@@ -1033,7 +1033,6 @@ name = "egui-theme-switch"
 version = "0.1.0"
 dependencies = [
  "egui",
- "serde",
 ]
 
 [[package]]
