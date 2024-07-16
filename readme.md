@@ -23,6 +23,8 @@ if ui.add(ThemeSwitch::new(&mut preference)).changed() {
 });
 ```
 
+## [Interactive Demo](https://tau.garden/egui-theme-switch/)
+
 ## [Docs](https://docs.rs/egui-theme-switch)
 
 ## License
