@@ -99,6 +99,7 @@ jobs:
           path: dist
 
   pages:
+    name: Deploy to GitHub Pages
     needs: build_demo
     permissions:
       pages: write
