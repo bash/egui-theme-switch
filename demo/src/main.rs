@@ -83,7 +83,9 @@ impl eframe::App for ThemeSwitchDemoApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut Frame) {
         CentralPanel::default().show(ctx, |ui| {
             ui.vertical_centered(|ui| {
+                #[cfg(target_arch = "wasm32")]
                 ui.heading("Theme Switch Demo");
+
                 ui.add_space(2.0);
                 if ui.add(ThemeSwitch::new(&mut self.preference)).changed() {
                     self.apply_theme_preference(ctx, frame);
