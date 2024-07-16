@@ -8,7 +8,7 @@ It allows you to choose between dark, light and follow system.
 
 <picture>
     <source media="(prefers-color-scheme: dark)" srcset="doc/dark.png">
-    <img src="doc/light.png" width="400">
+    <img src="doc/light.png" width="400" alt="Screenshot of a tri-state switch with three options: follow system, dark, light">
 </picture>
 
 ## Example
