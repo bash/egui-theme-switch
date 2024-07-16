@@ -53,7 +53,7 @@ impl<'a> ThemeSwitch<'a> {
 
 impl<'a> Widget for ThemeSwitch<'a> {
     fn ui(self, ui: &mut crate::Ui) -> crate::Response {
-        let (update, response) = switch(ui, *self.value, "Theme", self.options());
+        let (update, response) = switch(ui, *self.value, "Theme", options());
 
         if let Some(value) = update {
             *self.value = value;
@@ -63,26 +63,24 @@ impl<'a> Widget for ThemeSwitch<'a> {
     }
 }
 
-impl<'a> ThemeSwitch<'a> {
-    fn options(&self) -> Vec<SwitchOption<ThemePreference>> {
-        vec![
-            SwitchOption {
-                value: ThemePreference::System,
-                icon: cogwheel::cogwheel,
-                label: "Follow System",
-            },
-            SwitchOption {
-                value: ThemePreference::Dark,
-                icon: moon::moon,
-                label: "Dark",
-            },
-            SwitchOption {
-                value: ThemePreference::Light,
-                icon: sun::sun,
-                label: "Light",
-            },
-        ]
-    }
+fn options() -> Vec<SwitchOption<ThemePreference>> {
+    vec![
+        SwitchOption {
+            value: ThemePreference::System,
+            icon: cogwheel::cogwheel,
+            label: "Follow System",
+        },
+        SwitchOption {
+            value: ThemePreference::Dark,
+            icon: moon::moon,
+            label: "Dark",
+        },
+        SwitchOption {
+            value: ThemePreference::Light,
+            icon: sun::sun,
+            label: "Light",
+        },
+    ]
 }
 
 /// The user's theme preference.
