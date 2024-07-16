@@ -1,5 +1,8 @@
 # `egui-theme-switch`
 
+[![Docs](https://img.shields.io/docsrs/egui-theme-switch/latest)](https://docs.rs/egui-theme-switch)
+[![Crate Version](https://img.shields.io/crates/v/egui-theme-switch)](https://crates.io/crates/egui-theme-switch)
+
 A *very* pretty theme switch widget for your egui app.
 It allows you to choose between dark, light and follow system.
 
