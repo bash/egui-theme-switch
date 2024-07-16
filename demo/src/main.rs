@@ -1,11 +1,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
 use eframe::{Frame, Theme};
-use egui::{vec2, CentralPanel, Context, ViewportBuilder, ViewportCommand};
+use egui::{CentralPanel, Context, ViewportCommand};
 use egui_theme_switch::{ThemePreference, ThemeSwitch};
 
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
+    use egui::{vec2, ViewportBuilder};
+
     let system_theme = system_theme();
     let default_theme = system_theme.unwrap_or(Theme::Light);
     let options = eframe::NativeOptions {
@@ -37,7 +39,7 @@ fn main() {
             .start(
                 "egui-app",
                 web_options,
-                Box::new(|cc| Ok(Box::new(ThemeSwitchDemoApp::new(None)))),
+                Box::new(|_cc| Ok(Box::new(ThemeSwitchDemoApp::new(None)))),
             )
             .await;
 
@@ -126,7 +128,7 @@ fn system_theme() -> Option<Theme> {
     })
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(any(target_os = "linux", target_arch = "wasm32")))]
 fn system_theme() -> Option<Theme> {
     None
 }
