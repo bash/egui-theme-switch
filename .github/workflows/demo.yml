@@ -13,9 +13,6 @@ jobs:
   build:
     name: Build Demo
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: demo
     steps:
       - uses: actions/checkout@v4
       - name: Configure GitHub Pages
@@ -25,10 +22,11 @@ jobs:
       - uses: cargo-bins/cargo-binstall@main
       - run: cargo binstall --no-confirm trunk
       - run: trunk build --public-url '${{ steps.configure.outputs.base_url }}'
+        working-directory: demo
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: demo/dist
 
   pages:
     name: Deploy to GitHub Pages
