@@ -23,6 +23,8 @@
 use egui::emath::{Pos2, Rect};
 use egui::epaint::Color32;
 use egui::{Painter, Response, SystemTheme, Ui, Widget};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 mod arc;
 mod cogwheel;
@@ -87,6 +89,7 @@ impl<'a> Widget for ThemeSwitch<'a> {
 
 /// The user's theme preference.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum ThemePreference {
     /// Dark mode: light text on a dark background.
     Dark,

@@ -14,9 +14,11 @@ exclude = [".github", "doc/*.py", "deny.toml"]
 [features]
 default = ["accesskit"]
 accesskit = ["egui/accesskit"]
+serde = ["dep:serde"]
 
 [dependencies]
 egui = { version = "0.28.1", default-features = false }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [workspace]
 members = ["demo"]
