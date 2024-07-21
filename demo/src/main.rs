@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-use eframe::{Frame, Theme};
+use eframe::{get_value, set_value, CreationContext, Frame, IntegrationInfo, Theme};
 use egui::{CentralPanel, Context, ViewportCommand};
 use egui_theme_switch::{ThemePreference, ThemeSwitch};
 
@@ -14,6 +14,7 @@ fn main() -> eframe::Result {
         default_theme,
         centered: true,
         viewport: ViewportBuilder {
+            app_id: Some("garden.tau.EguiThemeSwitch".to_owned()),
             inner_size: Some(vec2(200., 40.)),
             ..Default::default()
         },
@@ -23,7 +24,7 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "Theme Switch Demo",
         options,
-        Box::new(move |_cc| Ok(Box::new(ThemeSwitchDemoApp::new(system_theme)))),
+        Box::new(move |cc| Ok(Box::new(ThemeSwitchDemoApp::new(system_theme, cc)))),
     )
 }
 
@@ -39,7 +40,7 @@ fn main() {
             .start(
                 "egui-app",
                 web_options,
-                Box::new(|_cc| Ok(Box::new(ThemeSwitchDemoApp::new(None)))),
+                Box::new(|cc| Ok(Box::new(ThemeSwitchDemoApp::new(None, cc)))),
             )
             .await;
 
@@ -69,13 +70,21 @@ struct ThemeSwitchDemoApp {
     system_theme: Option<Theme>,
 }
 
+const PREFERENCE_KEY: &str = "theme-preference";
+
 impl ThemeSwitchDemoApp {
-    fn new(system_theme: Option<Theme>) -> Self {
-        Self {
-            preference: ThemePreference::System,
+    fn new(system_theme: Option<Theme>, cc: &CreationContext) -> Self {
+        let preference = cc
+            .storage
+            .and_then(|s| get_value(s, PREFERENCE_KEY))
+            .unwrap_or(ThemePreference::System);
+        let app = Self {
+            preference,
             default_theme: Theme::Light,
             system_theme,
-        }
+        };
+        app.apply_theme_preference(&cc.egui_ctx, &cc.integration_info);
+        app
     }
 }
 
@@ -88,26 +97,30 @@ impl eframe::App for ThemeSwitchDemoApp {
 
                 ui.add_space(2.0);
                 if ui.add(ThemeSwitch::new(&mut self.preference)).changed() {
-                    self.apply_theme_preference(ctx, frame);
+                    self.apply_theme_preference(ctx, frame.info());
                 }
             })
         });
     }
+
+    fn save(&mut self, storage: &mut dyn eframe::Storage) {
+        set_value(storage, PREFERENCE_KEY, &self.preference)
+    }
 }
 
 impl ThemeSwitchDemoApp {
-    fn apply_theme_preference(&self, ctx: &Context, frame: &Frame) {
-        let theme = self.choose_theme(frame);
+    fn apply_theme_preference(&self, ctx: &Context, info: &IntegrationInfo) {
+        let theme = self.choose_theme(info);
         ctx.set_visuals(theme.egui_visuals());
         ctx.send_viewport_cmd(ViewportCommand::SetTheme(self.preference.into()));
     }
 
-    fn choose_theme(&self, frame: &Frame) -> Theme {
+    fn choose_theme(&self, info: &IntegrationInfo) -> Theme {
         match self.preference {
             ThemePreference::Dark => Theme::Dark,
             ThemePreference::Light => Theme::Light,
             ThemePreference::System => {
-                let eframe_system_theme = frame.info().system_theme;
+                let eframe_system_theme = info.system_theme;
                 eframe_system_theme
                     .or(self.system_theme)
                     .unwrap_or(self.default_theme)
