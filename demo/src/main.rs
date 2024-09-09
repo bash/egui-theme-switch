@@ -1,7 +1,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-use eframe::{get_value, set_value, CreationContext, Frame, IntegrationInfo, Theme};
-use egui::{CentralPanel, Context, ViewportCommand};
+#[cfg(target_arch = "wasm32")]
+use eframe::wasm_bindgen::JsCast as _;
+use eframe::{get_value, set_value, CreationContext, Frame};
+#[cfg(not(target_arch = "wasm32"))]
+use egui::ViewportCommand;
+use egui::{CentralPanel, Context, Hyperlink, Theme};
 use egui_theme_switch::{ThemePreference, ThemeSwitch};
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -9,9 +13,7 @@ fn main() -> eframe::Result {
     use egui::{vec2, ViewportBuilder};
 
     let system_theme = system_theme();
-    let default_theme = system_theme.unwrap_or(Theme::Light);
     let options = eframe::NativeOptions {
-        default_theme,
         centered: true,
         viewport: ViewportBuilder {
             app_id: Some("garden.tau.EguiThemeSwitch".to_owned()),
@@ -36,9 +38,15 @@ fn main() {
     let web_options = eframe::WebOptions::default();
 
     wasm_bindgen_futures::spawn_local(async {
+        let canvas = web_sys::window()
+            .unwrap()
+            .document()
+            .unwrap()
+            .get_element_by_id("egui-app")
+            .unwrap();
         let start_result = eframe::WebRunner::new()
             .start(
-                "egui-app",
+                canvas.dyn_into().unwrap(),
                 web_options,
                 Box::new(|cc| Ok(Box::new(ThemeSwitchDemoApp::new(None, cc)))),
             )
@@ -83,13 +91,13 @@ impl ThemeSwitchDemoApp {
             default_theme: Theme::Light,
             system_theme,
         };
-        app.apply_theme_preference(&cc.egui_ctx, &cc.integration_info);
+        app.apply_theme_preference(&cc.egui_ctx);
         app
     }
 }
 
 impl eframe::App for ThemeSwitchDemoApp {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut Frame) {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut Frame) {
         CentralPanel::default().show(ctx, |ui| {
             ui.vertical_centered(|ui| {
                 #[cfg(target_arch = "wasm32")]
@@ -97,7 +105,7 @@ impl eframe::App for ThemeSwitchDemoApp {
 
                 ui.add_space(2.0);
                 if ui.add(ThemeSwitch::new(&mut self.preference)).changed() {
-                    self.apply_theme_preference(ctx, frame.info());
+                    self.apply_theme_preference(ctx);
                 }
             })
         });
@@ -109,19 +117,21 @@ impl eframe::App for ThemeSwitchDemoApp {
 }
 
 impl ThemeSwitchDemoApp {
-    fn apply_theme_preference(&self, ctx: &Context, info: &IntegrationInfo) {
-        let theme = self.choose_theme(info);
-        ctx.set_visuals(theme.egui_visuals());
+    fn apply_theme_preference(&self, ctx: &Context) {
+        let theme = self.choose_theme(ctx);
+        ctx.options_mut(|opt| opt.follow_system_theme = false); // Temporarily disabled until theme rework is merged.
+        ctx.set_visuals(theme.default_visuals());
+        #[cfg(not(target_arch = "wasm32"))]
         ctx.send_viewport_cmd(ViewportCommand::SetTheme(self.preference.into()));
     }
 
-    fn choose_theme(&self, info: &IntegrationInfo) -> Theme {
+    fn choose_theme(&self, ctx: &Context) -> Theme {
         match self.preference {
             ThemePreference::Dark => Theme::Dark,
             ThemePreference::Light => Theme::Light,
             ThemePreference::System => {
-                let eframe_system_theme = info.system_theme;
-                eframe_system_theme
+                let system_theme = ctx.input(|input| input.raw.system_theme);
+                system_theme
                     .or(self.system_theme)
                     .unwrap_or(self.default_theme)
             }

@@ -29,7 +29,6 @@ use serde::{Deserialize, Serialize};
 
 mod arc;
 mod cogwheel;
-mod context_ext;
 mod moon;
 mod rotated_rect;
 mod sun;
@@ -172,7 +171,6 @@ struct ButtonSpace<T> {
 
 mod space_allocation {
     use super::*;
-    use crate::context_ext::ContextExt as _;
     use egui::emath::vec2;
     use egui::{Id, Sense};
 
@@ -185,7 +183,7 @@ mod space_allocation {
 
         // Focusable elements always get an accessible node, so let's ensure that
         // the parent is set correctly when the responses are created the first time.
-        ui.ctx().clone().with_accessibility_parent_(id, || {
+        ui.ctx().with_accessibility_parent(id, || {
             let buttons = options
                 .iter()
                 .enumerate()
@@ -401,7 +399,7 @@ mod painting {
 
 mod accessibility {
     use super::*;
-    use egui::{Context, Id, WidgetInfo, WidgetType};
+    use egui::{WidgetInfo, WidgetType};
 
     pub(super) fn attach_widget_info<T: PartialEq>(
         ui: &Ui,
@@ -412,7 +410,6 @@ mod accessibility {
         space
             .response
             .widget_info(|| radio_group_widget_info(ui, label));
-        fill_accesskit_radio_group_role(ui.ctx(), space.response.id);
 
         for button in &space.buttons {
             let selected = value == &button.option.value;
@@ -428,21 +425,10 @@ mod accessibility {
     }
 
     fn radio_group_widget_info(ui: &Ui, label: &str) -> WidgetInfo {
-        // TODO: Upstream WidgetType::RadioGroup
-        // and remove `configure_as_radio_group()`
-        WidgetInfo::labeled(WidgetType::Other, ui.is_enabled(), label)
+        WidgetInfo::labeled(WidgetType::RadioGroup, ui.is_enabled(), label)
     }
 
     fn button_widget_info(ui: &Ui, label: &str, selected: bool) -> WidgetInfo {
         WidgetInfo::selected(WidgetType::RadioButton, ui.is_enabled(), selected, label)
     }
-
-    #[cfg(feature = "accesskit")]
-    fn fill_accesskit_radio_group_role(ctx: &Context, id: Id) {
-        use egui::accesskit::Role;
-        ctx.accesskit_node_builder(id, |b| b.set_role(Role::RadioGroup));
-    }
-
-    #[cfg(not(feature = "accesskit"))]
-    fn fill_accesskit_radio_group_role(ctx: &Context, _id: Id) {}
 }
