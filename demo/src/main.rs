@@ -15,9 +15,10 @@ fn main() -> eframe::Result {
     let system_theme = system_theme();
     let options = eframe::NativeOptions {
         centered: true,
+        persist_window: false,
         viewport: ViewportBuilder {
             app_id: Some("garden.tau.EguiThemeSwitch".to_owned()),
-            inner_size: Some(vec2(200., 40.)),
+            inner_size: Some(vec2(200., 70.)),
             ..Default::default()
         },
         ..Default::default()
@@ -99,14 +100,28 @@ impl ThemeSwitchDemoApp {
 impl eframe::App for ThemeSwitchDemoApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut Frame) {
         CentralPanel::default().show(ctx, |ui| {
+            ui.style_mut().spacing.interact_size *= 1.5;
+
             ui.vertical_centered(|ui| {
                 #[cfg(target_arch = "wasm32")]
-                ui.heading("Theme Switch Demo");
+                {
+                    ui.heading("Theme Switch Demo");
+                    ui.add_space(2.0);
+                }
 
                 ui.add_space(2.0);
                 if ui.add(ThemeSwitch::new(&mut self.preference)).changed() {
                     self.apply_theme_preference(ctx);
                 }
+
+                ui.add_space(4.0);
+                ui.add(
+                    Hyperlink::from_label_and_url(
+                        "source code",
+                        "https://github.com/bash/egui-theme-switch",
+                    )
+                    .open_in_new_tab(true), // TODO: find out why opening in the same tab just reloads the current page
+                );
             })
         });
     }
