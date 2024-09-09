@@ -5,7 +5,7 @@ use egui::epaint::{Color32, Rounding};
 use std::f32::consts::TAU;
 
 pub(crate) fn cogwheel(painter: &Painter, center: Pos2, radius: f32, color: Color32) {
-    let inner_radius = 0.5 * radius;
+    let inner_radius = 0.3 * radius;
     let outer_radius = 0.8 * radius;
     let thickness = 0.3 * radius;
 
@@ -17,7 +17,7 @@ pub(crate) fn cogwheel(painter: &Painter, center: Pos2, radius: f32, color: Colo
     );
 
     let cogs = 8;
-    let cog_width = radius / 3.;
+    let cog_width = radius / 2.5;
     let cog_rounding = radius / 16.;
     let cog_length = radius - outer_radius + thickness / 2.;
 
