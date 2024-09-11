@@ -9,10 +9,6 @@ egui.workspace = true
 egui-theme-switch = { path = "..", features = ["serde"] }
 log = "0.4"
 
-[target.'cfg(target_os = "linux")'.dependencies]
-ashpd = "0.8.1"
-async-std = "1.12.0"
-
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen-futures = "0.4"
 web-sys = "0.3.4"

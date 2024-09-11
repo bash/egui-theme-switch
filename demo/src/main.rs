@@ -2,22 +2,20 @@
 
 #[cfg(target_arch = "wasm32")]
 use eframe::wasm_bindgen::JsCast as _;
-use eframe::{get_value, set_value, CreationContext, Frame};
-#[cfg(not(target_arch = "wasm32"))]
-use egui::ViewportCommand;
-use egui::{CentralPanel, Context, Hyperlink, Theme};
-use egui_theme_switch::{ThemePreference, ThemeSwitch};
+use eframe::{CreationContext, Frame};
+use egui::{CentralPanel, Hyperlink};
+use egui_theme_switch::ThemeSwitch;
+
+mod auto_viewport_theme;
 
 #[cfg(not(target_arch = "wasm32"))]
 fn main() -> eframe::Result {
     use egui::{vec2, ViewportBuilder};
 
-    let system_theme = system_theme();
     let options = eframe::NativeOptions {
         centered: true,
         persist_window: false,
         viewport: ViewportBuilder {
-            app_id: Some("garden.tau.EguiThemeSwitch".to_owned()),
             inner_size: Some(vec2(200., 70.)),
             ..Default::default()
         },
@@ -27,7 +25,7 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "Theme Switch Demo",
         options,
-        Box::new(move |cc| Ok(Box::new(ThemeSwitchDemoApp::new(system_theme, cc)))),
+        Box::new(move |cc| Ok(Box::new(ThemeSwitchDemoApp::new(cc)))),
     )
 }
 
@@ -73,27 +71,13 @@ fn main() {
     });
 }
 
-struct ThemeSwitchDemoApp {
-    preference: ThemePreference,
-    default_theme: Theme,
-    system_theme: Option<Theme>,
-}
-
-const PREFERENCE_KEY: &str = "theme-preference";
+#[derive(Debug)]
+struct ThemeSwitchDemoApp;
 
 impl ThemeSwitchDemoApp {
-    fn new(system_theme: Option<Theme>, cc: &CreationContext) -> Self {
-        let preference = cc
-            .storage
-            .and_then(|s| get_value(s, PREFERENCE_KEY))
-            .unwrap_or(ThemePreference::System);
-        let app = Self {
-            preference,
-            default_theme: Theme::Light,
-            system_theme,
-        };
-        app.apply_theme_preference(&cc.egui_ctx);
-        app
+    fn new(cc: &CreationContext) -> Self {
+        auto_viewport_theme::register(&cc.egui_ctx);
+        Self
     }
 }
 
@@ -110,8 +94,9 @@ impl eframe::App for ThemeSwitchDemoApp {
                 }
 
                 ui.add_space(2.0);
-                if ui.add(ThemeSwitch::new(&mut self.preference)).changed() {
-                    self.apply_theme_preference(ctx);
+                let mut preference = ctx.options(|opt| opt.theme_preference);
+                if ui.add(ThemeSwitch::new(&mut preference)).changed() {
+                    ctx.set_theme(preference);
                 }
 
                 ui.add_space(4.0);
@@ -125,50 +110,4 @@ impl eframe::App for ThemeSwitchDemoApp {
             })
         });
     }
-
-    fn save(&mut self, storage: &mut dyn eframe::Storage) {
-        set_value(storage, PREFERENCE_KEY, &self.preference)
-    }
-}
-
-impl ThemeSwitchDemoApp {
-    fn apply_theme_preference(&self, ctx: &Context) {
-        let theme = self.choose_theme(ctx);
-        ctx.options_mut(|opt| opt.follow_system_theme = false); // Temporarily disabled until theme rework is merged.
-        ctx.set_visuals(theme.default_visuals());
-        #[cfg(not(target_arch = "wasm32"))]
-        ctx.send_viewport_cmd(ViewportCommand::SetTheme(self.preference.into()));
-    }
-
-    fn choose_theme(&self, ctx: &Context) -> Theme {
-        match self.preference {
-            ThemePreference::Dark => Theme::Dark,
-            ThemePreference::Light => Theme::Light,
-            ThemePreference::System => {
-                let system_theme = ctx.input(|input| input.raw.system_theme);
-                system_theme
-                    .or(self.system_theme)
-                    .unwrap_or(self.default_theme)
-            }
-        }
-    }
-}
-
-/// Eframe doesn't follow the system theme on Linux.
-/// See: <https://github.com/rust-windowing/winit/issues/1549>
-#[cfg(target_os = "linux")]
-fn system_theme() -> Option<Theme> {
-    use ashpd::desktop::settings::{ColorScheme, Settings};
-    use async_std::task;
-    task::block_on(async {
-        match Settings::new().await.ok()?.color_scheme().await.ok()? {
-            ColorScheme::NoPreference | ColorScheme::PreferLight => Some(Theme::Light),
-            ColorScheme::PreferDark => Some(Theme::Dark),
-        }
-    })
-}
-
-#[cfg(not(any(target_os = "linux", target_arch = "wasm32")))]
-fn system_theme() -> Option<Theme> {
-    None
 }
