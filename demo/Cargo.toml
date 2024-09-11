@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 eframe.workspace = true
 egui.workspace = true
-egui-theme-switch = { path = "..", features = ["serde"] }
+egui-theme-switch = { path = ".." }
 log = "0.4"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

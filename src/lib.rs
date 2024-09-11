@@ -16,10 +16,6 @@
 //! }
 //! # });
 //! ```
-//!
-//! ## Available Features
-//! * `accesskit`—Integrate with accesskit (enabled by default).
-//! * `serde`—Makes [`ThemePreference`] de-/serializable.
 
 use egui::emath::{Pos2, Rect};
 use egui::epaint::Color32;
