@@ -7,7 +7,8 @@
 //!
 //! ## Example
 //! ```
-//! use egui_theme_switch::{ThemeSwitch, ThemePreference};
+//! use egui::ThemePreference;
+//! use egui_theme_switch::ThemeSwitch;
 //!
 //! # egui::__run_test_ui(|ui| {
 //! let mut preference = ThemePreference::System;
@@ -31,7 +32,8 @@ mod sun;
 /// preference (dark, light or follow system).
 ///
 /// ```
-/// use egui_theme_switch::{ThemeSwitch, ThemePreference};
+/// use egui::ThemePreference;
+/// use egui_theme_switch::ThemeSwitch;
 ///
 /// # egui::__run_test_ui(|ui| {
 /// let mut preference = ThemePreference::System;

@@ -14,13 +14,13 @@ It allows you to choose between dark, light and follow system.
 ## Example
 
 ```rust
-use egui_theme_switch::{ThemeSwitch, ThemePreference};
+use egui::ThemePreference;
+use egui_theme_switch::ThemeSwitch;
 
 let mut preference = ThemePreference::System;
-
 if ui.add(ThemeSwitch::new(&mut preference)).changed() {
     // ...
-});
+}
 ```
 
 ## [Interactive Demo](https://tau.garden/egui-theme-switch/)
