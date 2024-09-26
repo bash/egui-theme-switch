@@ -8,7 +8,7 @@ pub(crate) fn register(ctx: &Context) {
     let theme = Arc::new(RwLock::new(None));
     let handle = task::spawn(update_theme(theme.clone()));
     ctx.data_mut(|w| w.insert_temp(Id::NULL, State(Arc::new(RwLock::new(Some(handle))))));
-    ctx.on_begin_frame(
+    ctx.on_begin_pass(
         "update_system_theme",
         Arc::new(move |ctx| {
             ctx.input_mut(|input| input.raw.system_theme = theme.read().ok().map(|t| *t).flatten())

@@ -14,7 +14,7 @@ mod native {
     pub(crate) fn register(ctx: &Context) {
         // We use Id::NULL because there's only one instance of this plugin.
         if ctx.data(|d| d.get_temp::<State>(Id::NULL).is_none()) {
-            ctx.on_end_frame("update_viewport_theme", Arc::new(State::end_frame));
+            ctx.on_end_pass("update_viewport_theme", Arc::new(State::end_frame));
         }
     }
 
