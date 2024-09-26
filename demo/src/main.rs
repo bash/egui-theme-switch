@@ -47,7 +47,7 @@ fn main() {
             .start(
                 canvas.dyn_into().unwrap(),
                 web_options,
-                Box::new(|cc| Ok(Box::new(ThemeSwitchDemoApp::new(None, cc)))),
+                Box::new(|cc| Ok(Box::new(ThemeSwitchDemoApp::new(cc)))),
             )
             .await;
 

@@ -1,7 +1,7 @@
 //! An egui plugin that syncs egui's current theme to the viewport's.
 
 #[cfg(target_arch = "wasm32")]
-pub(crate) fn register(ctx: &egui::Context) {}
+pub(crate) fn register(_ctx: &egui::Context) {}
 
 #[cfg(not(target_arch = "wasm32"))]
 pub(crate) use native::register;
