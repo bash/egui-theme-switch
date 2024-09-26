@@ -6,17 +6,23 @@ feature-depth = 1
 
 [licenses]
 allow = [
-    "MIT",
     "Apache-2.0",
-    "OFL-1.1",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "ISC",
     "LicenseRef-UFL-1.0",
+    "MIT",
+    "OFL-1.1",
     "Unicode-DFS-2016",
+    "Zlib",
 ]
 confidence-threshold = 1.0
 
 [bans]
-multiple-versions = "deny"
+multiple-versions = "warn"
 wildcards = "deny"
+allow-wildcard-paths = true
 
 [sources]
 unknown-registry = "deny"

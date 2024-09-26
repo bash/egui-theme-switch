@@ -61,7 +61,6 @@ jobs:
       - name: Run clippy
         run: cargo clippy --workspace --all-targets --all-features -- --deny warnings
       - uses: EmbarkStudios/cargo-deny-action@v1
-        if: false
 
   test:
     name: Test
