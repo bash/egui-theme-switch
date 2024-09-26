@@ -8,7 +8,7 @@
 //! ## Example
 //! ```
 //! use egui::ThemePreference;
-//! use egui_theme_switch::ThemeSwitch;
+//! use egui_theme_switch::global_theme_switch;
 //!
 //! # egui::__run_test_ui(|ui| {
 //! global_theme_switch(ui);
