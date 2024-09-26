@@ -4,7 +4,7 @@
 use eframe::wasm_bindgen::JsCast as _;
 use eframe::{CreationContext, Frame};
 use egui::{CentralPanel, Hyperlink};
-use egui_theme_switch::ThemeSwitch;
+use egui_theme_switch::global_theme_switch;
 
 mod auto_viewport_theme;
 
@@ -94,10 +94,7 @@ impl eframe::App for ThemeSwitchDemoApp {
                 }
 
                 ui.add_space(2.0);
-                let mut preference = ctx.options(|opt| opt.theme_preference);
-                if ui.add(ThemeSwitch::new(&mut preference)).changed() {
-                    ctx.set_theme(preference);
-                }
+                global_theme_switch(ui);
 
                 ui.add_space(4.0);
                 ui.add(

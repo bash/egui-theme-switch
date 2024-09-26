@@ -15,8 +15,12 @@ It allows you to choose between dark, light and follow system.
 
 ```rust
 use egui::ThemePreference;
-use egui_theme_switch::ThemeSwitch;
+use egui_theme_switch::{ThemeSwitch, global_theme_switch};
 
+// A switch for egui's global theme preference:
+global_theme_switch(ui);
+
+// ... or alternatively:
 let mut preference = ThemePreference::System;
 if ui.add(ThemeSwitch::new(&mut preference)).changed() {
     // ...

@@ -11,10 +11,7 @@
 //! use egui_theme_switch::ThemeSwitch;
 //!
 //! # egui::__run_test_ui(|ui| {
-//! let mut preference = ThemePreference::System;
-//! if ui.add(ThemeSwitch::new(&mut preference)).changed() {
-//!     // ...
-//! }
+//! global_theme_switch(ui);
 //! # });
 //! ```
 
@@ -27,6 +24,14 @@ mod cogwheel;
 mod moon;
 mod rotated_rect;
 mod sun;
+
+/// A switch control to configure the global theme preference.
+pub fn global_theme_switch(ui: &mut Ui) {
+    let mut preference = ui.ctx().options(|opt| opt.theme_preference);
+    if ui.add(ThemeSwitch::new(&mut preference)).changed() {
+        ui.ctx().set_theme(preference);
+    }
+}
 
 /// A switch control that allows choosing the theme
 /// preference (dark, light or follow system).
