@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.1
+* Remove PNG files from package.
+
 ## 0.2.0
 * Update to egui 0.29.0
   * egui now provides its own `ThemePreference` type, so ours was removed.
