@@ -59,7 +59,7 @@ impl<'a> ThemeSwitch<'a> {
     }
 }
 
-impl<'a> Widget for ThemeSwitch<'a> {
+impl Widget for ThemeSwitch<'_> {
     fn ui(self, ui: &mut crate::Ui) -> crate::Response {
         static OPTIONS: [SwitchOption<ThemePreference>; 3] = [
             SwitchOption {
