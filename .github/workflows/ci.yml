@@ -78,7 +78,6 @@ jobs:
   test_package:
     name: Test Package
     runs-on: ubuntu-latest
-    if: false
     steps:
       - uses: actions/checkout@v4
       - name: Package
