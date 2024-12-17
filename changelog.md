@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.2
+* Update to egui 0.30.0.
+
 ## 0.2.1
 * Remove PNG files from package.
 
