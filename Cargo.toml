@@ -2,7 +2,7 @@
 name = "egui-theme-switch"
 version = "0.2.2"
 edition = "2021"
-rust-version = "1.79.0"
+rust-version = "1.80.0"
 license = "MIT OR Apache-2.0"
 readme = "readme.md"
 repository = "https://github.com/bash/egui-theme-switch"
