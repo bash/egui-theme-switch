@@ -1,6 +1,6 @@
 [package]
 name = "egui-theme-switch"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 rust-version = "1.80.0"
 license = "MIT OR Apache-2.0"
