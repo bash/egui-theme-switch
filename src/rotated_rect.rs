@@ -1,12 +1,12 @@
 use egui::emath::{vec2, Pos2, Rect, Rot2};
-use egui::epaint::{Color32, PathShape, Rounding, Stroke};
+use egui::epaint::{Color32, CornerRadius, PathShape, Stroke};
 use egui::Painter;
 
 /// Draws a rectangle with rounded corners, rotated around an origin.
 pub(crate) fn draw_rotated_rect(
     painter: &Painter,
     rect: Rect,
-    rounding: impl Into<Rounding>,
+    rounding: impl Into<CornerRadius>,
     fill: impl Into<Color32>,
     rot: impl Into<Rot2>,
     origin: Pos2,
@@ -26,16 +26,40 @@ pub(crate) fn draw_rotated_rect(
     // the round bits... 🤫
 }
 
-fn safe_inset_points(rect: Rect, rot: Rot2, origin: Pos2, rounding: Rounding) -> [Pos2; 8] {
+fn safe_inset_points(rect: Rect, rot: Rot2, origin: Pos2, rounding: CornerRadius) -> [Pos2; 8] {
     [
-        rotate(rect.left_top() + vec2(0.0, rounding.nw), rot, origin),
-        rotate(rect.left_top() + vec2(rounding.nw, 0.0), rot, origin),
-        rotate(rect.right_top() - vec2(rounding.ne, 0.0), rot, origin),
-        rotate(rect.right_top() + vec2(0.0, rounding.ne), rot, origin),
-        rotate(rect.right_bottom() - vec2(0.0, rounding.se), rot, origin),
-        rotate(rect.right_bottom() - vec2(rounding.se, 0.0), rot, origin),
-        rotate(rect.left_bottom() + vec2(rounding.sw, 0.0), rot, origin),
-        rotate(rect.left_bottom() - vec2(0.0, rounding.sw), rot, origin),
+        rotate(rect.left_top() + vec2(0.0, rounding.nw as f32), rot, origin),
+        rotate(rect.left_top() + vec2(rounding.nw as f32, 0.0), rot, origin),
+        rotate(
+            rect.right_top() - vec2(rounding.ne as f32, 0.0),
+            rot,
+            origin,
+        ),
+        rotate(
+            rect.right_top() + vec2(0.0, rounding.ne as f32),
+            rot,
+            origin,
+        ),
+        rotate(
+            rect.right_bottom() - vec2(0.0, rounding.se as f32),
+            rot,
+            origin,
+        ),
+        rotate(
+            rect.right_bottom() - vec2(rounding.se as f32, 0.0),
+            rot,
+            origin,
+        ),
+        rotate(
+            rect.left_bottom() + vec2(rounding.sw as f32, 0.0),
+            rot,
+            origin,
+        ),
+        rotate(
+            rect.left_bottom() - vec2(0.0, rounding.sw as f32),
+            rot,
+            origin,
+        ),
     ]
 }
 

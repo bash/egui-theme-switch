@@ -292,7 +292,7 @@ mod painting {
     use egui::emath::pos2;
     use egui::epaint::Stroke;
     use egui::style::WidgetVisuals;
-    use egui::Id;
+    use egui::{Id, StrokeKind};
 
     pub(super) fn draw_switch_background<T>(ui: &Ui, space: &AllocatedSpace<T>) {
         let rect = space.rect;
@@ -300,7 +300,8 @@ mod painting {
         let WidgetVisuals {
             bg_fill, bg_stroke, ..
         } = switch_visuals(ui, &space.response);
-        ui.painter().rect(rect, rounding, bg_fill, bg_stroke);
+        ui.painter()
+            .rect(rect, rounding, bg_fill, bg_stroke, StrokeKind::Middle);
     }
 
     fn switch_visuals(ui: &Ui, response: &Response) -> WidgetVisuals {

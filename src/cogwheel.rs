@@ -1,7 +1,7 @@
 use super::rotated_rect::draw_rotated_rect;
 use crate::Painter;
 use egui::emath::{vec2, Pos2, Rect, Rot2};
-use egui::epaint::{Color32, Rounding};
+use egui::epaint::{Color32, CornerRadius};
 use std::f32::consts::TAU;
 
 pub(crate) fn cogwheel(painter: &Painter, center: Pos2, radius: f32, color: Color32) {
@@ -18,7 +18,7 @@ pub(crate) fn cogwheel(painter: &Painter, center: Pos2, radius: f32, color: Colo
 
     let cogs = 8;
     let cog_width = radius / 2.5;
-    let cog_rounding = radius / 16.;
+    let cog_rounding = (radius / 16.) as u8;
     let cog_length = radius - outer_radius + thickness / 2.;
 
     for n in 0..cogs {
@@ -26,7 +26,7 @@ pub(crate) fn cogwheel(painter: &Painter, center: Pos2, radius: f32, color: Colo
         let cog_size = vec2(cog_width, cog_length);
         let rotation = Rot2::from_angle(TAU / cogs as f32 * n as f32);
         let rect = Rect::from_center_size(cog_center, cog_size);
-        let rounding = Rounding {
+        let rounding = CornerRadius {
             nw: cog_rounding,
             ne: cog_rounding,
             ..Default::default()
