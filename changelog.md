@@ -1,4 +1,8 @@
 # Changelog
+## 0.3.0
+* Update to egui 0.31.0 by @hacknus.
+* Raise MSRV to 1.81.0 (this matches egui's MSRV).
+
 ## 0.2.3
 * Raise MSRV to 1.80.0 (this matches egui's MSRV).
 
